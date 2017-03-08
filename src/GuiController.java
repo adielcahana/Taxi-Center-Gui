@@ -2,7 +2,9 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -23,8 +25,18 @@ public class GuiController{
     TextField info;
     @FXML
     TextField msgNum;
+    @FXML
+    Label clock;
+    @FXML
+    Label error;
 
-    private int numOfDrivers;
+    private Integer time;
+    private Integer numOfDrivers;
+
+    public GuiController(){
+        time = 0;
+        numOfDrivers = 0;
+    }
 
     @FXML
     void initialize(){
@@ -50,15 +62,14 @@ public class GuiController{
                         //todo: handle exception
                     }
                     --numOfDrivers;
-                    if (numOfDrivers > 0) {
+                    if (numOfDrivers == 0) {
                         msgNum.setVisible(true);
                         send.setVisible(true);
                     }
                 }
             }
         });
-        send.setOnMouseClicked(
-                new EventHandler<MouseEvent>() {
+        send.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     private int last_msg = 0;
                     @Override
                     public void handle(MouseEvent event) {
@@ -74,8 +85,11 @@ public class GuiController{
                             msgNum.setVisible(false);
                             send.setVisible(false);
                         }
+                        if (msg.equals("9")){
+                            time++;
+                            clock.setText(time.toString());
+                        }
                     }
                 });
     }
 }
-

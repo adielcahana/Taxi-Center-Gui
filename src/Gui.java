@@ -3,6 +3,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -14,6 +16,7 @@ import java.util.List;
 public class Gui extends Application {
     public static PrintWriter out;
     public static BufferedReader in;
+    public static BorderPane map_pane;
     @Override
     public void start(Stage primaryStage) throws Exception{
         Map map;
@@ -32,7 +35,8 @@ public class Gui extends Application {
             map = Map.deserialize(fromServer);
 
             BorderPane root = FXMLLoader.load(getClass().getResource("gui.fxml"));
-            root.setCenter(map.getGui());
+            map_pane = (BorderPane) map.getGui();
+            root.setCenter(map_pane);
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
             primaryStage.show();
@@ -42,7 +46,6 @@ public class Gui extends Application {
     }
 
     public static void main(String[] args) {
-        Gui g = new Gui();
         launch(args);
     }
 }

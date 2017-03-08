@@ -1,10 +1,13 @@
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -49,64 +52,30 @@ public class Map {
         return new Map(width, length);
     }
 
-//    public Pane getGui(){
-//        TilePane pane = new TilePane();
-//        BackgroundFill blackFill = new BackgroundFill(Color.BLACK,null,null);
-//        BackgroundFill whiteFill = new BackgroundFill(Color.WHITE,null,null);
-//        Background black = new Background(blackFill);
-//        Background white = new Background(whiteFill);
-//        Label block;
-//
-//        pane.setMaxSize( 300, 300);
-//        pane.setPrefRows(width - 1);
-//        pane.setPadding(new Insets(5, 5, 5, 5));
-//        pane.setVgap(15);
-//        pane.setHgap(4);
-//        pane.setStyle("-fx-background-color: DAE6F3;");
-//
-//        for(int i = 0; i <width; i++){
-//            for(int j = 0; j<length; j++){
-//                Point temp = new Point(i,j);
-//                block = new Label();
-//                block.setRotate(90);
-//                block.setStyle("-fx-border-color: black");
-//                block.setText(Integer.toString(i) + "," + Integer.toString(j));
-//                if(obstacles.contains(temp)){
-//                    block.setBackground(black);
-//                    pane.getChildren().add(block);
-//                } else {
-//                    block.setBackground(white);
-//                    StackPane sp = new StackPane();
-//                    sp.getChildren().add(block);
-//                    pane.getChildren().add(sp);
-//                }
-//            }
-//        }
-//        pane.setRotate(-90);
-//        return pane;
-//    }
 
-    public Pane getGui(){
-        GridPane pane = new GridPane();
-        pane.setAlignment(Pos.CENTER);
+    public Pane getGui() throws IOException {
+        GridPane pane = FXMLLoader.load(getClass().getResource("map.fxml"));
+
         BackgroundFill blackFill = new BackgroundFill(Color.BLACK,null,null);
         BackgroundFill whiteFill = new BackgroundFill(Color.WHITE,null,null);
         Background black = new Background(blackFill);
         Background white = new Background(whiteFill);
         Label block;
 
-        pane.setPadding(new Insets(25, 25, 25, 25));
-        pane.setVgap(10);
-        pane.setHgap(10);
-//        pane.setStyle("-fx-background-color: DAE6F3;");
+//        pane.setStyle("-fx-background-color: gray");
+//        pane.setAlignment(Pos.CENTER);
+//        pane.setPadding(new Insets(25, 25, 25, 25));
+//        pane.setVgap(10);
+//        pane.setHgap(10);
+//        pane.setRotate(-90);
 
         for(int i = 0; i <width; i++){
             for(int j = 0; j<length; j++){
                 Point temp = new Point(i,j);
                 block = new Label();
-                block.setRotate(90);
+                block.setPrefSize(50,50);
+                block.setRotate(-90);
                 block.setStyle("-fx-border-color: black");
-                block.setText(Integer.toString(i) + "," + Integer.toString(j));
                 if(obstacles.contains(temp)){
                     block.setBackground(black);
                     pane.add(block,i,j);
@@ -118,8 +87,7 @@ public class Map {
                 }
             }
         }
-        pane.setRotate(-90);
-        pane.setGridLinesVisible(true);
+//        pane.setGridLinesVisible(true);
         return pane;
     }
 }
