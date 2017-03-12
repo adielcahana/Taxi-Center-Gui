@@ -2,6 +2,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -53,41 +54,45 @@ public class Map {
     }
 
 
-    public Pane getGui() throws IOException {
-        GridPane pane = FXMLLoader.load(getClass().getResource("map.fxml"));
+    public void drawOn(Node surface) throws IOException {
+//        GridPane pane = FXMLLoader.load(getClass().getResource("map.fxml"));
+        GridPane pane = (GridPane) surface;
 
         BackgroundFill blackFill = new BackgroundFill(Color.BLACK,null,null);
         BackgroundFill whiteFill = new BackgroundFill(Color.WHITE,null,null);
         Background black = new Background(blackFill);
         Background white = new Background(whiteFill);
         Label block;
+        ColumnConstraints col;
+        RowConstraints row;
 
-//        pane.setStyle("-fx-background-color: gray");
-//        pane.setAlignment(Pos.CENTER);
-//        pane.setPadding(new Insets(25, 25, 25, 25));
-//        pane.setVgap(10);
-//        pane.setHgap(10);
-//        pane.setRotate(-90);
-
-        for(int i = 0; i <width; i++){
-            for(int j = 0; j<length; j++){
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < length; j++){
                 Point temp = new Point(i,j);
                 block = new Label();
-                block.setPrefSize(50,50);
-                block.setRotate(-90);
+                block.setMinSize(50, 50);
                 block.setStyle("-fx-border-color: black");
                 if(obstacles.contains(temp)){
                     block.setBackground(black);
-                    pane.add(block,i,j);
+                    pane.add(block,i,length - 1 - j);
                 } else {
                     block.setBackground(white);
-                    StackPane sp = new StackPane();
-                    sp.getChildren().add(block);
-                    pane.add(sp,i,j);
+                    pane.add(block,i,length - 1 - j);
                 }
             }
         }
+        for(int j = 0; j< width; j++) {
+            col = new ColumnConstraints();
+            col.setHgrow(Priority.ALWAYS);
+            pane.getColumnConstraints().add(col);
+        }
+
+        for(int j = 0; j< length; j++) {
+            row = new RowConstraints();
+            row.setVgrow(Priority.ALWAYS);
+            pane.getRowConstraints().add(row);
+        }
 //        pane.setGridLinesVisible(true);
-        return pane;
+//        return pane;
     }
 }

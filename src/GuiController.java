@@ -1,16 +1,16 @@
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiController{
     @FXML
@@ -22,37 +22,49 @@ public class GuiController{
     @FXML
     Button add;
     @FXML
-    TextField info;
+    TextField driver_info;
     @FXML
-    TextField msgNum;
+    TextField send_info;
     @FXML
     Label clock;
     @FXML
     Label error;
 
+    private Gui gui;
     private Integer time;
+    private String[] params;
     private Integer numOfDrivers;
 
     public GuiController(){
+        gui = Gui.getInstance();
+
+        List<String> args = gui.getParameters().getUnnamed();
+        args.add(0, "Client.out");
+        params = new String[3];
+        args.toArray(params);
+
         time = 0;
         numOfDrivers = 0;
     }
 
+    public void errorCheck(String msg){
+        if(msg.equals("error")){
+            error.setText("ERROR!");
+        }
+    }
+
     @FXML
     void initialize(){
+
         add.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-//                add.setVisible(false);
+                error.setText("");
+                //todo: handle case of multiple drivers
                 if (numOfDrivers > 0) {
                     PrintWriter pw;
-                    String driver_srl = info.getCharacters().toString();
-                    info.deleteText(0, driver_srl.length());
-
-                    String[] params = new String[3];
-                    params[0] = "Client.out";
-                    params[1] = "127.0.0.1";
-                    params[2] = "7654";
+                    String driver_srl = driver_info.getCharacters().toString();
+                    driver_info.deleteText(0, driver_srl.length());
 
                     try {
                         Process driver = Runtime.getRuntime().exec(params);
@@ -62,34 +74,68 @@ public class GuiController{
                         //todo: handle exception
                     }
                     --numOfDrivers;
-                    if (numOfDrivers == 0) {
-                        msgNum.setVisible(true);
-                        send.setVisible(true);
+                }
+            }
+        });
+
+        send.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            private Boolean getNUmOfDrivers = false;
+
+            @Override
+            public void handle(MouseEvent event) {
+                error.setText("");
+                String msg = send_info.getCharacters().toString();
+                if (getNUmOfDrivers == true) {
+                    numOfDrivers = Integer.parseInt(msg);
+                    send_info.deleteText(0, msg.length());
+                    gui.send("num of drivers:" + numOfDrivers);
+                } else {
+                    if (msg.equals("1")) { //start getting drivers
+                        send_info.deleteText(0, msg.length());
+                        send_info.getCharacters().toString();
+                        getNUmOfDrivers = true;
+
+                    } else if (msg.equals("2")) { //send trip
+                        send_info.deleteText(0, msg.length());
+                        String trip_srl = driver_info.getCharacters().toString();
+                        driver_info.deleteText(0, trip_srl.length());
+                        gui.send("trip: " + trip_srl);
+                        try {
+                            errorCheck(gui.recieve());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else if (msg.equals("3")) { //send taxi
+                        send_info.deleteText(0, msg.length());
+                        String taxi_srl = send_info.getCharacters().toString();
+                        send_info.deleteText(0, taxi_srl.length());
+                        gui.send("taxi: " + taxi_srl);
+                        try {
+                            errorCheck(gui.recieve());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (msg.equals("9")) { // time passed
+                        time++;
+                        gui.send("9");
+                        String[] location_srl;
+                        ArrayList<Point> locations = new ArrayList<>();
+                        try {
+                            location_srl = gui.recieve().split(" ");
+                            for (int i = 0; i < numOfDrivers; i++) {
+                                Point loc = Point.deserialize(location_srl[i]);
+                                locations.add(loc);
+                            }
+                            gui.setLocations(locations);
+                        } catch (IOException e) {
+                            //todo : handle exception
+                            e.printStackTrace();
+                        }
+                        gui.timePassed();
+                        clock.setText(time.toString());
                     }
                 }
             }
         });
-        send.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    private int last_msg = 0;
-                    @Override
-                    public void handle(MouseEvent event) {
-                        String msg = msgNum.getCharacters().toString();
-                        if (msg.equals("1")) {
-                            msgNum.deleteText(0, msg.length());
-                            last_msg = 1;
-                        }
-                        else if (last_msg == 1){
-                            numOfDrivers = Integer.parseInt(msg);
-                            msgNum.deleteText(0, msg.length());
-                            Gui.out.println("num of drivers:" + numOfDrivers);
-                            msgNum.setVisible(false);
-                            send.setVisible(false);
-                        }
-                        if (msg.equals("9")){
-                            time++;
-                            clock.setText(time.toString());
-                        }
-                    }
-                });
     }
 }
