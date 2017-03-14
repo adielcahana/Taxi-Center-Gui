@@ -66,13 +66,12 @@ public class Gui extends Application {
     }
 
     public void send(String msg){
-        out.print(msg);
+        out.println(msg);
     }
 
     public String recieve() throws IOException {
         String msg = in.readLine();
-        msg.substring(0,msg.length());
-        return in.readLine();
+        return msg.substring(0,msg.length());
     }
 
     public void setLocations(ArrayList<Point> locations){
@@ -111,6 +110,7 @@ public class Gui extends Application {
             this.map.drawOn(root.getCenter());
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
+            primaryStage.sizeToScene();
             primaryStage.show();
     }
     public void close(){

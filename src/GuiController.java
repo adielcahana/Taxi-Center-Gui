@@ -43,7 +43,7 @@ public class GuiController{
         gui = Gui.getInstance();
 
         List<String> arg = new ArrayList<String>();
-        arg.add("Client.out");
+        arg.add("client.out");
         List<String> args = gui.getParameters().getUnnamed();
         arg.add(args.get(0));
         arg.add(args.get(1));
@@ -77,7 +77,7 @@ public class GuiController{
                     try {
                         Process driver = Runtime.getRuntime().exec(params);
                         pw = new PrintWriter(driver.getOutputStream(), true);
-                        pw.println(driver_srl);
+                        pw.println(driver_srl + "\n");
                     } catch (IOException e) {
                         //todo: handle exception
                     }
@@ -124,14 +124,14 @@ public class GuiController{
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }else if (msg.equals("7")) { //send taxi
+                    }else if (msg.equals("7")) { //end
                         send_info.deleteText(0, msg.length());
                         gui.send("end");
-
+                        gui.close();
                     } else if (msg.equals("9")) { // time passed
                         send_info.deleteText(0, msg.length());
                         time++;
-                        gui.send("9");
+                        gui.send("time passed");
                         String[] location_srl;
                         ArrayList<Point> locations = new ArrayList<>();
                         try {

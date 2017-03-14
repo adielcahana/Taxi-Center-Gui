@@ -22,8 +22,9 @@ public class Driver {
     
     public Driver(int driverNum){
     	this.location = new Point(0,0);
-    	String imageLine = "file:/resources/taxi" + driverNum + ".jpg";
-    	this.iv = new ImageView(new Image(imageLine));
+        String imageLine = "/taxi" + driverNum + ".jpeg";
+        Image image = new Image(getClass().getResource(imageLine).toExternalForm());
+    	this.iv = new ImageView(image);
     }
 
     public void setLocation(Point loc){
@@ -45,10 +46,10 @@ public class Driver {
             }
         }
 
-        iv.setFitWidth(100);
+//        iv.setFitWidth(100);
         iv.setPreserveRatio(true);
         iv.setSmooth(true);
-        iv.setCache(true);
+//        iv.setCache(true);
 
         grid.add(iv, location.getX(), numRows - location.getY() - 1);
 
