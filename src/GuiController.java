@@ -124,7 +124,12 @@ public class GuiController{
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }else if (msg.equals("7")) { //send taxi
+                        send_info.deleteText(0, msg.length());
+                        gui.send("end");
+
                     } else if (msg.equals("9")) { // time passed
+                        send_info.deleteText(0, msg.length());
                         time++;
                         gui.send("9");
                         String[] location_srl;

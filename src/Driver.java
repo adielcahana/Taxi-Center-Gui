@@ -22,8 +22,7 @@ public class Driver {
     
     public Driver(int driverNum){
     	this.location = new Point(0,0);
-    	String imageLine = "/resources/taxi" + driverNum + ".jpg";
-//    	InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream(imageLine);
+    	String imageLine = "file:/resources/taxi" + driverNum + ".jpg";
     	this.iv = new ImageView(new Image(imageLine));
     }
 

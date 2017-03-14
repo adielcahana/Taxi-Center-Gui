@@ -23,6 +23,7 @@ public class Gui extends Application {
     private Map map;
     private BorderPane root;
 
+    private Socket sock;
     private PrintWriter out;
     private BufferedReader in;
 /*
@@ -65,10 +66,12 @@ public class Gui extends Application {
     }
 
     public void send(String msg){
-        out.println(msg);
+        out.print(msg);
     }
 
     public String recieve() throws IOException {
+        String msg = in.readLine();
+        msg.substring(0,msg.length());
         return in.readLine();
     }
 
@@ -82,22 +85,19 @@ public class Gui extends Application {
     public void addDriver(int driverNum){
     	Driver driver = new Driver(driverNum);
     	this.drivers.add(driver);
-    	driver.drawOn(root.getCenter());
+    	Node borderPane = this.root.getCenter();
+    	driver.drawOn(borderPane);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
     	instance = this;
         List<String> args = this.getParameters().getUnnamed();
-        try (
-                Socket socket = new Socket(args.get(0), Integer.parseInt(args.get(1)));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        ) {
+        try {
+            this.sock = new Socket(args.get(0), Integer.parseInt(args.get(1)));
+            this.out = new PrintWriter(sock.getOutputStream(),true);
+            this.in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
             String fromServer;
-
-            this.out = out;
-            this.in = in;
 
             fromServer = in.readLine();
             map = Map.deserialize(fromServer);
@@ -106,14 +106,20 @@ public class Gui extends Application {
         }
         drivers = new ArrayList<Driver>();
     	
-            BorderPane root = FXMLLoader.load(getClass().getResource("gui.fxml"));
+            this.root = FXMLLoader.load(getClass().getResource("gui.fxml"));
             root.setCenter(new GridPane());
             this.map.drawOn(root.getCenter());
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
             primaryStage.show();
     }
-
+    public void close(){
+        try {
+            this.sock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
         launch(args);
     }
