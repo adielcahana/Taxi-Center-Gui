@@ -18,13 +18,12 @@ import javax.imageio.ImageIO;
  */
 public class Driver {
     private Point location;
-    private ImageView iv;
+    private Image image;
     
     public Driver(int driverNum){
     	this.location = new Point(0,0);
-        String imageLine = "/taxi" + driverNum + ".jpeg";
-        Image image = new Image(getClass().getResource(imageLine).toExternalForm());
-    	this.iv = new ImageView(image);
+        String imageLine = "/taxi" + driverNum + ".jpg";
+        image = new Image(getClass().getResource(imageLine).toExternalForm());
     }
 
     public void setLocation(Point loc){
@@ -45,7 +44,7 @@ public class Driver {
                 }
             }
         }
-
+        ImageView iv = new ImageView(image);
 //        iv.setFitWidth(100);
         iv.setPreserveRatio(true);
         iv.setSmooth(true);

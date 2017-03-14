@@ -22,6 +22,7 @@ public class Gui extends Application {
     private ArrayList<Driver> drivers;
     private Map map;
     private BorderPane root;
+    private ArrayList<Process> processList;
 
     private Socket sock;
     private PrintWriter out;
@@ -53,7 +54,7 @@ public class Gui extends Application {
     }
 
     public void timePassed(){
-        Node p = root.getCenter();
+    	GridPane p = new GridPane();
         try {
             map.drawOn(p);
             for (Driver driver: drivers) {
@@ -63,8 +64,13 @@ public class Gui extends Application {
             //todo: handle exception
             e.printStackTrace();
         }
+        root.setCenter(p);
     }
 
+    public void addProcess(Process proc){
+    	this.processList.add(proc);
+    }
+    
     public void send(String msg){
         out.println(msg);
     }
@@ -104,6 +110,7 @@ public class Gui extends Application {
             // todo: handle exception
         }
         drivers = new ArrayList<Driver>();
+        processList = new ArrayList<Process>();
     	
             this.root = FXMLLoader.load(getClass().getResource("gui.fxml"));
             root.setCenter(new GridPane());
@@ -115,8 +122,11 @@ public class Gui extends Application {
     }
     public void close(){
         try {
+        	for(Process p : processList){
+        					p.waitFor();
+        		}
             this.sock.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
