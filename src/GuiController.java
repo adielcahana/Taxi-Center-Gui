@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
@@ -29,6 +30,9 @@ public class GuiController{
     Label clock;
     @FXML
     Label error;
+    @FXML
+    GridPane grid;
+    
 
     private Gui gui;
     private Integer time;
@@ -38,10 +42,13 @@ public class GuiController{
     public GuiController(){
         gui = Gui.getInstance();
 
+        List<String> arg = new ArrayList<String>();
+        arg.add("Client.out");
         List<String> args = gui.getParameters().getUnnamed();
-        args.add(0, "Client.out");
+        arg.add(args.get(0));
+        arg.add(args.get(1));
         params = new String[3];
-        args.toArray(params);
+        arg.toArray(params);
 
         time = 0;
         numOfDrivers = 0;
@@ -65,6 +72,7 @@ public class GuiController{
                     PrintWriter pw;
                     String driver_srl = driver_info.getCharacters().toString();
                     driver_info.deleteText(0, driver_srl.length());
+                    gui.addDriver(numOfDrivers);
 
                     try {
                         Process driver = Runtime.getRuntime().exec(params);
@@ -89,6 +97,7 @@ public class GuiController{
                     numOfDrivers = Integer.parseInt(msg);
                     send_info.deleteText(0, msg.length());
                     gui.send("num of drivers:" + numOfDrivers);
+                    getNUmOfDrivers = false;
                 } else {
                     if (msg.equals("1")) { //start getting drivers
                         send_info.deleteText(0, msg.length());

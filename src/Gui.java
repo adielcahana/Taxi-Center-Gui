@@ -25,7 +25,7 @@ public class Gui extends Application {
 
     private PrintWriter out;
     private BufferedReader in;
-
+/*
     public Gui(){
         instance = this;
         List<String> args = this.getParameters().getUnnamed();
@@ -44,9 +44,9 @@ public class Gui extends Application {
         } catch (Exception e) {
             // todo: handle exception
         }
-        drivers = new ArrayList<>();
+        drivers = new ArrayList<Driver>();
     }
-
+*/
     public static Gui getInstance(){
         return instance;
     }
@@ -78,14 +78,40 @@ public class Gui extends Application {
             driver.setLocation(nextLoc.next());
         }
     }
+    
+    public void addDriver(int driverNum){
+    	Driver driver = new Driver(driverNum);
+    	this.drivers.add(driver);
+    	driver.drawOn(root.getCenter());
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+    	instance = this;
+        List<String> args = this.getParameters().getUnnamed();
+        try (
+                Socket socket = new Socket(args.get(0), Integer.parseInt(args.get(1)));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        ) {
+            String fromServer;
+
+            this.out = out;
+            this.in = in;
+
+            fromServer = in.readLine();
+            map = Map.deserialize(fromServer);
+        } catch (Exception e) {
+            // todo: handle exception
+        }
+        drivers = new ArrayList<Driver>();
+    	
             BorderPane root = FXMLLoader.load(getClass().getResource("gui.fxml"));
+            root.setCenter(new GridPane());
             this.map.drawOn(root.getCenter());
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
-            primaryStage.showAndWait();
+            primaryStage.show();
     }
 
     public static void main(String[] args) {
