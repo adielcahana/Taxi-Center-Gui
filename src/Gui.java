@@ -129,6 +129,7 @@ public class Gui extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
     public static void main(String[] args) {
         launch(args);

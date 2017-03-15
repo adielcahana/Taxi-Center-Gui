@@ -74,17 +74,19 @@ public class GuiController{
 					PrintWriter pw;
 					String driver_srl = driver_info.getCharacters().toString();
 					driver_info.deleteText(0, driver_srl.length());
-					gui.addDriver(numOfDrivers);
 
 					try {
 						Process driver = Runtime.getRuntime().exec(params);
-						gui.addProcess(driver);
 						pw = new PrintWriter(driver.getOutputStream(), true);
 						pw.println(driver_srl);
+						if(isValidDriverInput(driver_srl)){
+							gui.addDriver(numOfDrivers);
+							gui.addProcess(driver);
+							--numOfDrivers;
+						}
 					} catch (IOException e) {
 						//todo: handle exception
 					}
-					--numOfDrivers;
 				}
 			}
 		});
@@ -163,5 +165,28 @@ public class GuiController{
 				} 
 			}
 		});
+	}
+	public boolean isValidDriverInput(String driverInput) {
+		int commaCounter = 0;
+		// flag for reading letter
+		boolean readAlpha = false;
+		for(int i=0; i< driverInput.length() && commaCounter <= 4; i++){
+			if(commaCounter == 2 && !readAlpha){ // letter should appear only once, after the 2nd comma
+				if(!Character.isLetter(driverInput.charAt(i))) {
+					return false;
+				}
+				readAlpha = true;
+				continue;
+			} else { // otherwise, digits or comma should appear
+				if(driverInput.charAt(i) == ','){
+					commaCounter++;
+					continue;
+				} else if(!Character.isDigit(driverInput.charAt(i))){
+					return false;
+				}
+			}
+		}
+		// if all the other tests passed, verify that there are only 4 comma
+		return commaCounter == 4;
 	}
 }
