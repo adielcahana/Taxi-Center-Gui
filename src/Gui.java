@@ -112,7 +112,8 @@ public class Gui extends Application {
             this.timePassed();
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
-            primaryStage.sizeToScene();
+            primaryStage.setMaxHeight(650);
+            primaryStage.setMaxWidth(650);
             primaryStage.show();
     }
 
