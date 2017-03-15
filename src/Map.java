@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class Map {
         Background black = new Background(blackFill);
         Background white = new Background(whiteFill);
         Label block;
+        AnchorPane anchor;
         ColumnConstraints col;
         RowConstraints row;
 
@@ -70,26 +72,35 @@ public class Map {
             for(int j = 0; j < length; j++){
                 Point temp = new Point(i,j);
                 block = new Label();
-                block.setMinSize(50, 50);
+                anchor = new AnchorPane();
+
+                AnchorPane.setTopAnchor(block, 0.0);
+                AnchorPane.setBottomAnchor(block, 0.0);
+                AnchorPane.setRightAnchor(block, 0.0);
+                AnchorPane.setLeftAnchor(block, 0.0);
+
+                anchor.getChildren().add(block);
+//                block.setMinSize(50, 50);
                 block.setStyle("-fx-border-color: black");
+
                 if(obstacles.contains(temp)){
                     block.setBackground(black);
-                    pane.add(block,i,length - 1 - j);
+                    pane.add(anchor,i,length - 1 - j);
                 } else {
                     block.setBackground(white);
-                    pane.add(block,i,length - 1 - j);
+                    pane.add(anchor,i,length - 1 - j);
                 }
             }
         }
         for(int j = 0; j< width; j++) {
             col = new ColumnConstraints();
-            col.setHgrow(Priority.ALWAYS);
+            col.setPercentWidth(100/width);
             pane.getColumnConstraints().add(col);
         }
 
         for(int j = 0; j< length; j++) {
             row = new RowConstraints();
-            row.setVgrow(Priority.ALWAYS);
+            row.setPercentHeight(100/length);
             pane.getRowConstraints().add(row);
         }
 //        pane.setGridLinesVisible(true);

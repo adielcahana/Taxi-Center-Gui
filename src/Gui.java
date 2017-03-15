@@ -1,11 +1,17 @@
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,34 +33,25 @@ public class Gui extends Application {
     private Socket sock;
     private PrintWriter out;
     private BufferedReader in;
-/*
-    public Gui(){
-        instance = this;
-        List<String> args = this.getParameters().getUnnamed();
-        try (
-                Socket socket = new Socket(args.get(0), Integer.parseInt(args.get(1)));
-                PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        ) {
-            String fromServer;
 
-            this.out = out;
-            this.in = in;
-
-            fromServer = in.readLine();
-            map = Map.deserialize(fromServer);
-        } catch (Exception e) {
-            // todo: handle exception
-        }
-        drivers = new ArrayList<Driver>();
-    }
-*/
     public static Gui getInstance(){
         return instance;
     }
 
     public void timePassed(){
+        AnchorPane anchor = new AnchorPane();
     	GridPane p = new GridPane();
+
+        AnchorPane.setTopAnchor(p, 0.0);
+        AnchorPane.setBottomAnchor(p, 0.0);
+        AnchorPane.setRightAnchor(p, 0.0);
+        AnchorPane.setLeftAnchor(p, 0.0);
+
+        anchor.getChildren().add(p);
+
+        BorderPane.setAlignment(anchor, Pos.CENTER);
+        BorderPane.setMargin(anchor, new Insets(10,10,10,10));
+
         try {
             map.drawOn(p);
             for (Driver driver: drivers) {
@@ -64,7 +61,8 @@ public class Gui extends Application {
             //todo: handle exception
             e.printStackTrace();
         }
-        root.setCenter(p);
+
+        root.setCenter(anchor);
     }
 
     public void addProcess(Process proc){
@@ -90,8 +88,7 @@ public class Gui extends Application {
     public void addDriver(int driverNum){
     	Driver driver = new Driver(driverNum);
     	this.drivers.add(driver);
-    	Node borderPane = this.root.getCenter();
-    	driver.drawOn(borderPane);
+    	timePassed();
     }
 
     @Override
@@ -111,15 +108,14 @@ public class Gui extends Application {
         }
         drivers = new ArrayList<Driver>();
         processList = new ArrayList<Process>();
-    	
             this.root = FXMLLoader.load(getClass().getResource("gui.fxml"));
-            root.setCenter(new GridPane());
-            this.map.drawOn(root.getCenter());
+            this.timePassed();
             primaryStage.setTitle("Taxi Center");
             primaryStage.setScene(new Scene(root, root.getPrefWidth(), root.getPrefHeight()));
             primaryStage.sizeToScene();
             primaryStage.show();
     }
+
     public void close(){
         try {
         	for(Process p : processList){
@@ -129,6 +125,7 @@ public class Gui extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Platform.exit();
         System.exit(0);
     }
     public static void main(String[] args) {

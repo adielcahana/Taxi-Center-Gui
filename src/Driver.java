@@ -2,6 +2,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import java.awt.image.BufferedImage;
@@ -45,12 +46,21 @@ public class Driver {
             }
         }
         ImageView iv = new ImageView(image);
-//        iv.setFitWidth(100);
-        iv.setPreserveRatio(true);
+        AnchorPane.setTopAnchor(iv, 0.0);
+        AnchorPane.setBottomAnchor(iv, 0.0);
+        AnchorPane.setRightAnchor(iv, 0.0);
+        AnchorPane.setLeftAnchor(iv, 0.0);
+
+
+        AnchorPane anchor = new AnchorPane();
+        anchor.getChildren().add(iv);
+
+        iv.fitWidthProperty().bind(anchor.widthProperty());
+        iv.fitHeightProperty().bind(anchor.heightProperty());
+
+//        iv.setPreserveRatio(true);
         iv.setSmooth(true);
-//        iv.setCache(true);
 
-        grid.add(iv, location.getX(), numRows - location.getY() - 1);
-
+        grid.add(anchor, location.getX(), numRows - location.getY() - 1);
     }
 }
