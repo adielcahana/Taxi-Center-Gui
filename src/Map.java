@@ -21,6 +21,9 @@ public class Map {
     private int obstacles_size;
     private ArrayList<Point> obstacles;
 
+    /**
+	 * constructor
+	 */
     public Map(int width, int length, ArrayList<Point> obstacles) {
         this.width = width;
         this.length = length;
@@ -28,12 +31,18 @@ public class Map {
         this.obstacles_size = obstacles.size();
     }
 
+    /**
+	 * constructor
+	 */
     public Map(int width, int length) {
         this.width = width;
         this.length = length;
         this.obstacles_size = 0;
     }
 
+    /**
+	 * create map from string of height & width
+	 */
     public static Map deserialize(String map_srl){
         Point temp;
         int width, length, size;
@@ -54,7 +63,9 @@ public class Map {
         return new Map(width, length);
     }
 
-
+    /**
+	 * draw the map - grid pane
+	 */
     public void drawOn(Node surface) throws IOException {
 //        GridPane pane = FXMLLoader.load(getClass().getResource("map.fxml"));
         GridPane pane = (GridPane) surface;
@@ -80,7 +91,6 @@ public class Map {
                 AnchorPane.setLeftAnchor(block, 0.0);
 
                 anchor.getChildren().add(block);
-//                block.setMinSize(50, 50);
                 block.setStyle("-fx-border-color: black");
 
                 if(obstacles.contains(temp)){
@@ -103,7 +113,5 @@ public class Map {
             row.setPercentHeight(100/length);
             pane.getRowConstraints().add(row);
         }
-//        pane.setGridLinesVisible(true);
-//        return pane;
     }
 }
